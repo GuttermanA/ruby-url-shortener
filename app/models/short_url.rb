@@ -42,7 +42,6 @@ class ShortUrl < ApplicationRecord
       short_url = CHARACTERS[num % BASE] + short_url
       num = num / BASE
     end
-    puts short_url
     short_url
   end
 end
