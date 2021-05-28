@@ -1,12 +1,16 @@
 require "uri"
 
 class ShortUrl < ApplicationRecord
+  include ActiveModel::Serializers::JSON
   CHARACTERS = [*"0".."9", *"a".."z", *"A".."Z"].freeze
   BASE = CHARACTERS.length
   validates :full_url, uniqueness: { case_sensitive: false }, presence: { message: "can't be blank" }
   validate :validate_full_url
-
   after_create :asyc_update_title!
+
+  def public_attributes
+    self.as_json
+  end
 
   def short_code
     ShortUrl.encode(self.id)
@@ -37,6 +41,14 @@ class ShortUrl < ApplicationRecord
   end
 
   private
+
+  def attributes
+    {
+      "full_url" => nil,
+      "click_count" => nil,
+      "title" => nil,
+    }
+  end
 
   def validate_full_url
     uri = URI.parse(full_url)
