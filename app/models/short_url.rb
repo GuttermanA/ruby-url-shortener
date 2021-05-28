@@ -2,7 +2,7 @@ require "uri"
 
 class ShortUrl < ApplicationRecord
   CHARACTERS = [*"0".."9", *"a".."z", *"A".."Z"].freeze
-  validates :full_url, uniqueness: { case_sensitive: false }, presence: true
+  validates :full_url, uniqueness: { case_sensitive: false }, presence: { message: "can't be blank" }
   validate :validate_full_url
 
   after_create :update_title!
