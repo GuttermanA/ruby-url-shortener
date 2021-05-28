@@ -8,6 +8,7 @@ class ShortUrl < ApplicationRecord
   after_create :update_title!
 
   def short_code
+    encode
   end
 
   def update_title!
@@ -25,5 +26,16 @@ class ShortUrl < ApplicationRecord
     errors.add(:full_url, "is not a valid url")
   end
 
+  def encode
+    short_url = ""
+    num = self.id
+    base = CHARACTERS.size
+    while num > 0
+      num /= base
+      rem = num % base
+      short_url << CHARACTERS[rem]
+    end
+    puts short_url
+    short_url
   end
 end
