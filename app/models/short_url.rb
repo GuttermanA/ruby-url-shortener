@@ -25,6 +25,11 @@ class ShortUrl < ApplicationRecord
     id
   end
 
+  def self.find_by_short_code(short_code)
+    @id = self.decode(short_code)
+    self.find_by(id: @id)
+  end
+
   private
 
   def validate_full_url
