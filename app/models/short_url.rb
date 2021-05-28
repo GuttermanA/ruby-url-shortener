@@ -5,6 +5,8 @@ class ShortUrl < ApplicationRecord
   validates :full_url, uniqueness: { case_sensitive: false }, presence: true
   validate :validate_full_url
 
+  attr_accessor :title
+
   def short_code
   end
 
