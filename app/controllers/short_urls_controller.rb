@@ -4,19 +4,18 @@ class ShortUrlsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    render json: {urls: ShortUrl.limit(100).order("click_count DESC")}
+    render json: { urls: ShortUrl.limit(100).order("click_count DESC") }
   end
 
   def create
     new_url = ShortUrl.new(full_url: params[:full_url])
     if new_url.save
-        render json: {short_code: '12345'}, status: :created
+      render json: { short_code: "12345" }, status: :created
     else
-        render json: {errors: new_url.errors.full_url}, status: :unprocessable_entity
+      render json: { errors: new_url.errors.full_url }, status: :unprocessable_entity
     end
   end
 
   def show
   end
-
 end
