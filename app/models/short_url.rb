@@ -5,12 +5,13 @@ class ShortUrl < ApplicationRecord
   validates :full_url, uniqueness: { case_sensitive: false }, presence: true
   validate :validate_full_url
 
-  attr_accessor :title
+  after_create :update_title!
 
   def short_code
   end
 
   def update_title!
+    UpdateTitleJob.perform_later(self.id)
   end
 
   private
