@@ -2,6 +2,7 @@ require "uri"
 
 class ShortUrl < ApplicationRecord
   CHARACTERS = [*"0".."9", *"a".."z", *"A".."Z"].freeze
+  BASE = CHARACTERS.length
   validates :full_url, uniqueness: { case_sensitive: false }, presence: { message: "can't be blank" }
   validate :validate_full_url
 
@@ -26,14 +27,11 @@ class ShortUrl < ApplicationRecord
     errors.add(:full_url, "is not a valid url")
   end
 
-  def encode
+  def self.encode(num)
     short_url = ""
-    num = self.id
-    base = CHARACTERS.size
     while num > 0
-      num /= base
-      rem = num % base
-      short_url << CHARACTERS[rem]
+      short_url = CHARACTERS[num % BASE] + short_url
+      num = num / BASE
     end
     puts short_url
     short_url
