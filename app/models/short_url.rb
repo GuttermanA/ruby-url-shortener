@@ -9,11 +9,20 @@ class ShortUrl < ApplicationRecord
   after_create :update_title!
 
   def short_code
-    encode
+    ShortUrl.encode(self.id)
   end
 
   def update_title!
     UpdateTitleJob.perform_later(self.id)
+  end
+
+  def self.decode(chars)
+    id = 0
+    chars.each_char.with_index { |c, index|
+      pow = BASE ** (chars.length - index - 1)
+      id += CHARACTERS.index(c) * pow
+    }
+    id
   end
 
   private
