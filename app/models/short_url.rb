@@ -6,13 +6,19 @@ class ShortUrl < ApplicationRecord
   validates :full_url, uniqueness: { case_sensitive: false }, presence: { message: "can't be blank" }
   validate :validate_full_url
 
-  after_create :update_title!
+  after_create :asyc_update_title!
 
   def short_code
     ShortUrl.encode(self.id)
   end
 
   def update_title!
+    doc = Nokogiri::HTML(URI.open(self.full_url))
+    self.title = doc.at_css("title").text
+    self.save!
+  end
+
+  def asyc_update_title!
     UpdateTitleJob.perform_later(self.id)
   end
 
