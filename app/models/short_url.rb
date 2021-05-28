@@ -37,8 +37,8 @@ class ShortUrl < ApplicationRecord
   end
 
   def self.encode(num)
+    return nil if num == nil || num < 0
     return "0" if num == 0
-    return nil if num < 0
     short_url = ""
     while num > 0
       short_url = CHARACTERS[num % BASE] + short_url
