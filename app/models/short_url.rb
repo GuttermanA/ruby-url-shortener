@@ -46,12 +46,13 @@ class ShortUrl < ApplicationRecord
   end
 
   def validate_full_url
+    message = "Full url is not a valid url"
     uri = URI.parse(full_url)
     unless uri.is_a?(URI::HTTP) && !uri.host.nil?
-      errors.add(:full_url, "Full url is not a valid url")
+      errors.add(:full_url, message)
     end
   rescue
-    errors.add(:full_url, "is not a valid url")
+    errors.add(:full_url, message)
   end
 
   def self.encode(num)
