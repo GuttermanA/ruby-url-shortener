@@ -3,7 +3,7 @@ class ShortUrl < ApplicationRecord
   CHARACTERS = [*"0".."9", *"a".."z", *"A".."Z"].freeze
   BASE = CHARACTERS.length
   validates :full_url, uniqueness: { case_sensitive: false, message: "Full url already exists" }, presence: { message: "can't be blank" }
-  validate :validate_full_url
+  validate :validate_full_url, on: :create
   after_create :async_update_title!
 
   def public_attributes
