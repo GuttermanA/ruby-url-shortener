@@ -6,7 +6,7 @@ class ShortUrl < ApplicationRecord
   BASE = CHARACTERS.length
   validates :full_url, uniqueness: { case_sensitive: false }, presence: { message: "can't be blank" }
   validate :validate_full_url
-  after_create :asyc_update_title!
+  after_create :async_update_title!
 
   def public_attributes
     self.as_json
@@ -22,7 +22,7 @@ class ShortUrl < ApplicationRecord
     self.save!
   end
 
-  def asyc_update_title!
+  def async_update_title!
     UpdateTitleJob.perform_later(self.id)
   end
 
