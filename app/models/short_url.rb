@@ -26,15 +26,6 @@ class ShortUrl < ApplicationRecord
     UpdateTitleJob.perform_later(self.id)
   end
 
-  def self.decode(chars)
-    id = 0
-    chars.each_char.with_index { |c, index|
-      pow = BASE ** (chars.length - index - 1)
-      id += CHARACTERS.index(c) * pow
-    }
-    id
-  end
-
   def self.find_by_short_code(short_code)
     @id = self.decode(short_code)
     self.find_by(id: @id)
@@ -68,5 +59,14 @@ class ShortUrl < ApplicationRecord
       num = num / BASE
     end
     short_url
+  end
+
+  def self.decode(chars)
+    id = 0
+    chars.each_char.with_index { |c, index|
+      pow = BASE ** (chars.length - index - 1)
+      id += CHARACTERS.index(c) * pow
+    }
+    id
   end
 end
