@@ -9,11 +9,16 @@ class ShortUrlsController < ApplicationController
   end
 
   def create
-    new_url = ShortUrl.new(full_url: params[:full_url])
-    if new_url.save
-      render json: { short_code: new_url.short_code }, status: :created
+    @new_url = ShortUrl.new(full_url: params[:full_url])
+
+    if @new_url.save
+      render json: { short_code: @new_url.short_code }, status: :created and return
+    end
+
+    if @new_url.is_taken_error?
+      render json: { errors: @new_url.errors[:full_url], short_code: ShortUrl.find_by(full_url: params[:full_url]).short_code }, status: :conflict
     else
-      render json: { errors: new_url.errors[:full_url] }, status: :unprocessable_entity
+      render json: { errors: @new_url.errors[:full_url] }, status: :unprocessable_entity
     end
   end
 

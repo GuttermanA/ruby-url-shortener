@@ -2,7 +2,7 @@ class ShortUrl < ApplicationRecord
   include ActiveModel::Serializers::JSON
   CHARACTERS = [*"0".."9", *"a".."z", *"A".."Z"].freeze
   BASE = CHARACTERS.length
-  validates :full_url, uniqueness: { case_sensitive: false }, presence: { message: "can't be blank" }
+  validates :full_url, uniqueness: { case_sensitive: false, message: "Full url already exists" }, presence: { message: "can't be blank" }
   validate :validate_full_url
   after_create :async_update_title!
 
@@ -27,6 +27,12 @@ class ShortUrl < ApplicationRecord
   def self.find_by_short_code(short_code)
     @id = self.decode(short_code)
     self.find_by(id: @id)
+  end
+
+  def is_taken_error?
+    full_url_errors = self.errors&.details.dig(:full_url)
+    return false if full_url_errors.nil?
+    full_url_errors.any? { |hash| hash[:error] == :taken }
   end
 
   private

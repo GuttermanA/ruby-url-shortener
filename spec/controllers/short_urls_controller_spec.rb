@@ -20,8 +20,17 @@ RSpec.describe ShortUrlsController, type: :controller do
 
   describe "create" do
     it "creates a short_url" do
-      post :create, params: { full_url: "https://www.test.rspec" }, format: :json
+      post :create, params: { full_url: "https://www.gmail.com" }, format: :json
+      expect(response.status).to eq 201
       expect(parsed_response["short_code"]).to be_a(String)
+    end
+
+    it "if already exists, returns error and existing short_code" do
+      short_url = ShortUrl.create(full_url: "https://www.test.rspec")
+      post :create, params: { full_url: short_url.full_url }, format: :json
+      expect(response.status).to eq 409
+      expect(parsed_response["short_code"]).to be_a(String)
+      expect(parsed_response["errors"]).to be_include("Full url already exists")
     end
 
     it "does not create a short_url" do
