@@ -1,5 +1,3 @@
-require "uri"
-
 class ShortUrl < ApplicationRecord
   include ActiveModel::Serializers::JSON
   CHARACTERS = [*"0".."9", *"a".."z", *"A".."Z"].freeze
