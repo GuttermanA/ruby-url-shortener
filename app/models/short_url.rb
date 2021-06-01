@@ -25,8 +25,16 @@ class ShortUrl < ApplicationRecord
   end
 
   def self.find_by_short_code(short_code)
-    @id = self.decode(short_code)
-    self.find_by(id: @id)
+    self.find_by(short_code: short_code)
+  end
+
+  def self.find_by_short_code_and_update_clicks
+    short_url = ShortUrl.find_by_short_code(params[:id])
+    if short_url
+      short_url.click_count += 1
+      short_url.save
+    end
+    short_url
   end
 
   def is_taken_error?
