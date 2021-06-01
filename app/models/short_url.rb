@@ -40,7 +40,9 @@ class ShortUrl < ApplicationRecord
   end
 
   def update_short_code!
-    self.short_code = ShortUrl.encode(self.id)
+    # encode the full_url and append the db id to ensure no collisions and fulfill the requirment that the short_code length "is relative to the number of links currently in the system"
+    short_code = ShortUrl.encode_str_6(self.full_url) + ShortUrl.encode(self.id)
+    self.short_code = short_code
     self.save
     self.short_code
   end
@@ -76,12 +78,30 @@ class ShortUrl < ApplicationRecord
     short_url
   end
 
-  def self.decode(chars)
+  def self.decode(base62str)
     id = 0
     chars.each_char.with_index { |c, index|
       pow = BASE ** (chars.length - index - 1)
       id += CHARACTERS.index(c) * pow
     }
     id
+  end
+
+  def self.encode_str_6(str)
+    #convert string to hex so it can easily be converted to decimal
+    hex = str.unpack("H*").first
+    #convert hex to integer so it can be encoded using our algorithm
+    int = hex.to_i(16)
+    # use encoding function and take first 6 chars of the ecoded value
+    ShortUrl.encode(int)[0..6]
+  end
+
+  def self.decode_to_str(base62str)
+    #decode encoded int
+    decoded = ShortUrl.decode(base62str)
+    #int to hex
+    hex = decoded.to_s(16)
+    #hex to str
+    [hex].pack("H*")
   end
 end
