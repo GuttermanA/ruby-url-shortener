@@ -4,14 +4,10 @@ class ShortUrl < ApplicationRecord
   BASE = CHARACTERS.length
   validates :full_url, uniqueness: { case_sensitive: false, message: "Full url already exists" }, presence: { message: "can't be blank" }
   validate :validate_full_url, on: :create
-  after_create :async_update_title!
+  after_create :async_update_title!, :update_short_code!
 
   def public_attributes
     self.as_json
-  end
-
-  def short_code
-    ShortUrl.encode(self.id)
   end
 
   def update_title!
@@ -41,6 +37,12 @@ class ShortUrl < ApplicationRecord
     full_url_errors = self.errors&.details.dig(:full_url)
     return false if full_url_errors.nil?
     full_url_errors.any? { |hash| hash[:error] == :taken }
+  end
+
+  def update_short_code!
+    self.short_code = ShortUrl.encode(self.id)
+    self.save
+    self.short_code
   end
 
   private
