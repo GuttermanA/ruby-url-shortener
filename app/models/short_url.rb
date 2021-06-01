@@ -28,8 +28,8 @@ class ShortUrl < ApplicationRecord
     self.find_by(short_code: short_code)
   end
 
-  def self.find_by_short_code_and_update_clicks
-    short_url = ShortUrl.find_by_short_code(params[:id])
+  def self.find_by_short_code_and_update_clicks(id)
+    short_url = ShortUrl.find_by_short_code(id)
     if short_url
       short_url.click_count += 1
       short_url.save
