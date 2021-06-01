@@ -24,7 +24,7 @@ class ShortUrlsController < ApplicationController
   end
 
   def show
-    @short_url = ShortUrl.find_by_short_code_and_update_clicks(params[:id])
+    @short_url = ShortUrl.find_by_short_code_and_update_clicks!(params[:id])
     if @short_url
       redirect_to @short_url.full_url, format: :json
     else
