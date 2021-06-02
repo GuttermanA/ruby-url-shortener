@@ -13,7 +13,22 @@ RSpec.describe ShortUrlsController, type: :controller do
 
     it "has a list of the top 100 urls" do
       get :index, format: :json
+
       expect(parsed_response["urls"]).to be_include(short_url.public_attributes)
+    end
+
+    it "provides the list of the top 100 urls in descending order" do
+      low = 500
+      med = 1286
+      high = 30234
+      ShortUrl.create(full_url: "https://www.gmail.com", click_count: low)
+      ShortUrl.create(full_url: "https://www.reddit.com", click_count: med)
+      ShortUrl.create(full_url: "https://www.seamless.com", click_count: high)
+      get :index, format: :json
+      expect(parsed_response["urls"].first["click_count"]).to eq high
+      expect(parsed_response["urls"].second["click_count"]).to eq med
+      expect(parsed_response["urls"].third["click_count"]).to eq low
+      expect(parsed_response["urls"].fourth["click_count"]).to eq 0
     end
   end
 
